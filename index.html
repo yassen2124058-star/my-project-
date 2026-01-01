@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solder-Meter | Next-Gen E-Waste Solution</title>
+    
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* --- HIGH-END CSS STYLING --- */
+        :root {
+            --primary: #0a192f; /* Deep Navy */
+            --secondary: #172a45; /* Lighter Navy */
+            --accent: #64ffda; /* Cyan/Teal (Tech feel) */
+            --heat: #ff6b6b; /* Red/Orange for Solder */
+            --text: #ccd6f6;
+            --white: #e6f1ff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--primary);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--primary); }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 5px; }
+
+        /* HERO SECTION */
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(rgba(10, 25, 47, 0.85), rgba(10, 25, 47, 0.95)), url('poster-bg.jpg');
+            background-size: cover;
+            background-attachment: fixed; /* Parallax effect */
+            position: relative;
+        }
+
+        h1 {
+            font-size: 4rem;
+            color: var(--white);
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(100, 255, 218, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--accent);
+            font-family: monospace;
+            border-right: 2px solid var(--accent);
+            white-space: nowrap;
+            overflow: hidden;
+            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+        }
+
+        /* NAVIGATION */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 25, 47, 0.95);
+            padding: 15px 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        nav li { margin: 0 20px; }
+        nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: 0.3s;
+        }
+        nav a:hover { color: var(--accent); }
+
+        /* SECTIONS */
+        section {
+            padding: 80px 10%;
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--white);
+            margin-bottom: 50px;
+            display: flex;
+            align-items: center;
+        }
+        .section-title::after {
+            content: "";
+            display: block;
+            width: 300px;
+            height: 1px;
+            background: var(--secondary);
+            margin-left: 20px;
+        }
+
+        /* CARDS (Problem/Solution) */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--secondary);
+            padding: 30px;
+            border-radius: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid transparent;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px -15px rgba(2, 12, 27, 0.7);
+        }
+        .icon-box {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        /* INTERACTIVE DATA VISUALIZATION SECTION */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            margin-top: 40px;
+        }
+        .chart-box {
+            background: #112240;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        /* METRICS COUNTERS */
+        .metrics {
+            display: flex;
+            justify-content: space-around;
+            margin: 50px 0;
+            text-align: center;
+        }
+        .metric-item h3 {
+            font-size: 3rem;
+            margin: 0;
+            color: var(--heat);
+        }
+        .metric-item p { color: var(--accent); }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #8892b0;
+            font-size: 0.9rem;
+            margin-top: 50px;
+        }
+
+        /* ANIMATIONS */
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--accent); } }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .chart-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#concept">Concept</a></li>
+            <li><a href="#data">Live Data</a></li>
+            <li><a href="#team">Team</a></li>
+        </ul>
+    </nav>
+
+    <header id="home">
+        <h1 data-aos="fade-down" data-aos-duration="1000">Solder-Meter System</h1>
+        <div class="subtitle">Integration. Precision. Sustainability.</div>
+        <br>
+        <p data-aos="fade-up" data-aos-delay="500" style="max-width: 600px; line-height: 1.6;">
+            A revolutionary Grade 11 Capstone Project repurposing E-Waste into high-precision scientific tools.
+        </p>
+        <a href="#data" style="margin-top: 30px; padding: 12px 30px; border: 2px solid var(--accent); color: var(--accent); text-decoration: none; border-radius: 5px; font-weight: bold;" data-aos="zoom-in" data-aos-delay="800">
+            See the Results
+        </a>
+    </header>
+
+    <section id="concept">
+        <h2 class="section-title">The Innovation</h2>
+        <div class="card-container">
+            <div class="card" data-aos="flip-left">
+                <div class="icon-box"><i class="fas fa-trash-restore"></i></div>
+                <h3>The Crisis</h3>
+                <p>Egypt generates <strong>690,000 Tonnes</strong> of E-waste annually. Valuable components are buried, releasing toxins into the soil.</p>
+            </div>
+            <div class="card" data-aos="flip-right" data-aos-delay="200">
+                <div class="icon-box"><i class="fas fa-tools"></i></div>
+                <h3>The Solution</h3>
+                <p>We salvage heating elements and meter casings to build a <strong>Hybrid Tool</strong>: A Soldering Iron + Multimeter in one device.</p>
+            </div>
+            <div class="card" data-aos="flip-left" data-aos-delay="400">
+                <div class="icon-box"><i class="fas fa-microchip"></i></div>
+                <h3>The Tech</h3>
+                <p>Integrated <strong>Buck Converters</strong> for voltage regulation and a custom-wired selector dial for instant mode switching.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="data">
+        <h2 class="section-title">Performance Analysis</h2>
+        
+        <div class="metrics" data-aos="zoom-in">
+            <div class="metric-item">
+                <h3>99.9%</h3>
+                <p>Voltage Accuracy</p>
+            </div>
+            <div class="metric-item">
+                <h3 style="color: var(--accent);">97.9%</h3>
+                <p>Thermal Efficiency</p>
+            </div>
+            <div class="metric-item">
+                <h3>466°C</h3>
+                <p>Max Temp</p>
+            </div>
+        </div>
+
+        <div class="chart-grid">
+            <div class="chart-box" data-aos="fade-right">
+                <canvas id="voltageChart"></canvas>
+                <p style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
+                    <em>Figure 7: Voltage Measurements across 5 Trials (Target: 220V)</em>
+                </p>
+            </div>
+
+            <div class="chart-box" data-aos="fade-left">
+                <canvas id="tempChart"></canvas>
+                <p style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
+                    <em>Figure 6: Max Temperature Stability (Avg: 466°C)</em>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="team">
+        <h2 class="section-title">The Engineers</h2>
+        <div class="card-container" style="grid-template-columns: repeat(4, 1fr);">
+            <div class="card" style="text-align: center;" data-aos="fade-up" data-aos-delay="100">
+                <i class="fas fa-user-circle" style="font-size: 3rem; color: var(--text);"></i>
+                <h4>Abdel-Salam</h4>
+            </div>
+            <div class="card" style="text-align: center;" data-aos="fade-up" data-aos-delay="200">
+                <i class="fas fa-user-circle" style="font-size: 3rem; color: var(--text);"></i>
+                <h4>Adel M.</h4>
+            </div>
+            <div class="card" style="text-align: center;" data-aos="fade-up" data-aos-delay="300">
+                <i class="fas fa-user-circle" style="font-size: 3rem; color: var(--text);"></i>
+                <h4>Osama M.</h4>
+            </div>
+            <div class="card" style="text-align: center;" data-aos="fade-up" data-aos-delay="400">
+                <i class="fas fa-user-circle" style="font-size: 3rem; color: var(--text);"></i>
+                <h4>Yassen S.</h4>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>Obour STEM School Capstone Project | Group 21209</p>
+        <p>Built for the Final Exhibition 2025</p>
+    </footer>
+
+    <script>
+        // Initialize Animate On Scroll (AOS)
+        AOS.init();
+
+        // --- CHART 1: VOLTAGE DATA (From Your PDF Table 3) ---
+        const ctxV = document.getElementById('voltageChart').getContext('2d');
+        const voltageChart = new Chart(ctxV, {
+            type: 'line',
+            data: {
+                labels: ['Trial 1', 'Trial 2', 'Trial 3', 'Trial 4', 'Trial 5'],
+                datasets: [{
+                    label: 'Measured Voltage (V)',
+                    data: [227, 218, 217, 218, 219], // Exact data from your PDF
+                    borderColor: '#64ffda',
+                    backgroundColor: 'rgba(100, 255, 218, 0.1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#fff',
+                    fill: true,
+                    tension: 0.3
+                }, {
+                    label: 'Standard Target (220V)',
+                    data: [220, 220, 220, 220, 220],
+                    borderColor: '#ff6b6b',
+                    borderDash: [5, 5],
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { labels: { color: '#ccd6f6' } },
+                    title: { display: true, text: 'Voltage Accuracy Analysis', color: '#fff' }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: false, 
+                        min: 210, 
+                        max: 230,
+                        grid: { color: '#1e2d4d' },
+                        ticks: { color: '#8892b0' }
+                    },
+                    x: {
+                        grid: { color: '#1e2d4d' },
+                        ticks: { color: '#8892b0' }
+                    }
+                }
+            }
+        });
+
+        // --- CHART 2: TEMPERATURE DATA (From Your PDF Table 4) ---
+        const ctxT = document.getElementById('tempChart').getContext('2d');
+        const tempChart = new Chart(ctxT, {
+            type: 'bar',
+            data: {
+                labels: ['Run 1', 'Run 2', 'Run 3', 'Run 4', 'Run 5'],
+                datasets: [{
+                    label: 'Max Temperature (°C)',
+                    data: [462.2, 464.4, 465.1, 468.2, 470.1], // Exact data from your PDF
+                    backgroundColor: [
+                        'rgba(255, 107, 107, 0.6)',
+                        'rgba(255, 107, 107, 0.7)',
+                        'rgba(255, 107, 107, 0.8)',
+                        'rgba(255, 107, 107, 0.9)',
+                        'rgba(255, 107, 107, 1)'
+                    ],
+                    borderColor: '#ff6b6b',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { labels: { color: '#ccd6f6' } },
+                    title: { display: true, text: 'Heating Element Thermal Output', color: '#fff' }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: false, 
+                        min: 450, 
+                        grid: { color: '#1e2d4d' },
+                        ticks: { color: '#8892b0' }
+                    },
+                    x: { ticks: { color: '#8892b0' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
